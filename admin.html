@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Admin · 30 Gaya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.kpis { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px }
+.kpi { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:14px; min-width:0 }
+.kpi b { display:block; font-family:var(--display); font-size:32px; font-variant-numeric:tabular-nums }
+.kpi span { font-size:12.5px; color:var(--muted) }
+.tbl { overflow-x:auto; border:1px solid var(--line); border-radius:14px }
+table { border-collapse:collapse; width:100%; font-size:13.5px; font-variant-numeric:tabular-nums }
+th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap }
+th { font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; color:var(--muted); text-transform:uppercase; background:var(--panel) }
+.pill { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; font-weight:700 }
+.pill.y { background:rgba(61,214,140,.15); color:var(--ok) } .pill.n { background:rgba(155,161,174,.15); color:var(--muted) } .pill.v { background:rgba(245,184,46,.18); color:var(--gold) }
+.bar { height:8px; border-radius:999px; background:var(--panel2); overflow:hidden; margin-top:6px } .bar i { display:block; height:100%; background:var(--gold) }
+.gform { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px }
+.gform input { font:15px var(--body); color:var(--fg); background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:11px 12px; width:100% }
+.search { font:15px var(--body); color:var(--fg); background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:11px 12px; width:100%; margin-bottom:10px }
+
+.gform .consent input { width:20px; height:20px; padding:0 }
+@media (max-width:720px) { .kpis { grid-template-columns:repeat(2,minmax(0,1fr)) } .gform { grid-template-columns:1fr } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="band" style="padding-bottom:6px"><div class="eyebrow">Admin · pemilik sahaja</div><h2>Pusat Kawalan Komuniti</h2></header>
+  <div id="demo-note"></div>
+
+  <section class="panel" id="login" style="max-width:520px">
+    <h3>Masukkan kunci admin</h3>
+    <p class="muted" style="font-size:14px">Dapatkan di Supabase → SQL Editor: <code>select value from lg.settings where key = 'admin_key';</code></p>
+    <form id="lf" class="row" novalidate><input class="code" id="key" type="password" autocomplete="off" style="flex:1;min-width:180px" placeholder="admin key"><button class="btn" type="submit">Masuk</button></form>
+    <div class="err" id="lerr" role="alert"></div>
+  </section>
+
+  <div id="main" hidden>
+    <section class="band" style="padding-top:10px"><div class="kpis" id="kpis"></div></section>
+    <section class="band" style="padding-top:0"><div class="panel" style="display:flex;flex-direction:column;gap:12px"><div><span class="eyebrow">Matlamat HQ · hanya admin nampak</span></div><div id="journey"></div></div></section>
+
+    <section class="band" style="padding-top:0">
+      <div class="row" style="justify-content:space-between"><h3>Leads</h3><div class="row"><button class="btn ghost" id="csv" type="button" style="padding:10px 14px">Muat turun CSV</button><button class="btn ghost" id="reload" type="button" style="padding:10px 14px">Muat semula</button></div></div>
+      <input class="search" id="q" type="search" placeholder="Cari nama, email, telefon…" style="margin-top:10px">
+      <div class="tbl"><table><thead><tr><th>Masa</th><th>Nama</th><th>Telefon</th><th>Email</th><th>Grup</th><th>Status</th><th>Dijemput oleh</th><th>Rujukan sah</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <p class="muted" style="font-size:13px" id="rowcount"></p>
+    </section>
+
+    <section class="band" style="padding-top:0">
+      <h3>Senarai syak (rujukan tidak dikira)</h3>
+      <p class="muted" style="font-size:13.5px;margin:4px 0 8px">Sistem sudah tidak mengira rujukan ini. Jika nampak palsu, batalkan akaun itu (atau perujuknya) supaya tidak dikira di mana-mana dan hadiah ditarik balik.</p>
+      <div class="tbl"><table><thead><tr><th>Masa</th><th>Nama</th><th>Telefon</th><th>Perujuk</th><th>Sebab</th></tr></thead><tbody id="sus"></tbody></table></div>
+      <form class="row" id="flagf" novalidate style="margin-top:12px"><input class="search" id="flagwho" placeholder="No. telefon atau email" style="flex:1;min-width:180px"><input class="search" id="flagwhy" placeholder="Sebab (cth. nombor palsu)" style="flex:1;min-width:160px">
+        <button class="btn" type="submit" data-f="1">Batalkan akaun</button><button class="btn ghost" type="button" id="unflag">Pulihkan</button></form>
+    </section>
+
+    <section class="band" style="padding-top:0">
+      <h3>Top perujuk</h3>
+      <div class="tbl" style="margin-top:10px"><table><thead><tr><th>Nama</th><th>Telefon</th><th>Sah</th><th>Jumlah</th></tr></thead><tbody id="top"></tbody></table></div>
+    </section>
+
+    <section class="band" style="padding-top:0">
+      <h3>Grup WhatsApp (bergilir)</h3>
+      <div id="groups" style="display:grid;gap:10px;margin-top:10px"></div>
+      <details class="panel" style="margin-top:12px"><summary style="cursor:pointer;font-weight:800">+ Tambah grup baharu</summary>
+        <form id="gnew" class="gform" style="margin-top:12px" novalidate>
+          <input id="gn" placeholder="Nama grup (cth. Kelas 30 Gaya #2)"><input id="gu" placeholder="https://chat.whatsapp.com/..."><input id="gc" placeholder="Kod pengesahan (cth. MIRUL-7733)"><input id="gk" type="number" placeholder="Kapasiti (950)">
+          <button class="btn" type="submit">Tambah grup</button></form></details>
+    </section>
+
+    <section class="band" style="padding-top:0">
+      <h3>Tetapan</h3>
+      <div class="panel" style="display:grid;gap:12px;margin-top:10px">
+        <div><b>Hadiah & peringkat pelancaran</b><p class="muted" style="font-size:13.5px;margin:4px 0 8px">Setiap hadiah dibuka bila <b>komuniti capai</b> X ahli <b>dan</b> ahli ada Y kawan disahkan (kumulatif). Untuk lepaskan awal, turunkan “Dibuka pada”.</p><div id="rewards" style="display:grid;gap:10px"></div></div>
+        <form class="gform" id="setf" novalidate style="border:1px solid var(--line);border-radius:14px;padding:12px">
+          <label class="f">Saiz Founding (percuma terus)<input id="s-founding" type="number" min="0"></label>
+          <label class="f">Matlamat akhir komuniti<input id="s-final" type="number" min="1"></label>
+          <button class="btn ghost" type="submit">Simpan tetapan komuniti</button></form>
+        <form class="row" id="vipf" novalidate><label class="f" style="flex:1;min-width:220px">Beri akses VIP (semua hadiah) — no. telefon<input type="tel" id="vipph" placeholder="012-345 6789"></label><button class="btn" type="submit">Jadikan VIP</button></form>
+      </div>
+    </section>
+    <p><button class="btn ghost" id="out" type="button">Log keluar admin</button> <a class="btn ghost" href="app.html#advanced" target="_blank" rel="noopener">👁 Pratonton WOW Advanced</a></p>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script src="config.js"></script>
+<script src="assets/app.js"></script>
+<script>
+let KEY = store.get("adminkey"), DATA = null;
+if (C.DEMO) $("demo-note").innerHTML = '<div class="panel" style="border-color:var(--gold);margin-bottom:12px"><b class="gold" style="color:var(--gold)">MOD DEMO</b> — data contoh sahaja. Kunci admin demo: <code>demo</code></div>';
+const fmt = s => new Date(s).toLocaleString("ms-MY", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+async function loadSus() {
+  const r = await rpc("admin_suspects", { p_key: KEY }); if (!Array.isArray(r)) return;
+  $("sus").innerHTML = r.map(x => `<tr><td>${fmt(x.created_at)}</td><td>${esc(x.name)}${x.flagged ? ' <span class="pill n">Dibatalkan</span>' : ""}</td><td>${esc(x.phone)}</td><td>${esc(x.perujuk)}<br><span class="muted">${esc(x.perujuk_phone)}</span></td><td>${(x.sebab || []).map(esc).join("<br>")}</td></tr>`).join("")
+    || '<tr><td colspan="5" class="muted">Tiada rujukan mencurigakan.</td></tr>';
+}
+async function flag(on) {
+  const r = await rpc("admin_flag", { p_key: KEY, p_who: $("flagwho").value, p_flag: on, p_reason: $("flagwhy").value || null });
+  toast(r.ok ? (on ? "Akaun dibatalkan ✓" : "Akaun dipulihkan ✓") : "Tidak dijumpai"); load();
+}
+async function load() {
+  const r = await rpc("admin_overview", { p_key: KEY });
+  if (r.error) { store.del("adminkey"); $("login").hidden = false; $("main").hidden = true; $("lerr").textContent = "Kunci admin salah."; return; }
+  DATA = r; $("login").hidden = true; $("main").hidden = false; render(); loadSus();
+}
+function render() {
+  const t = DATA.totals;
+  if (DATA.community) $("journey").innerHTML = journeyHTML(DATA.community);
+  $("s-founding").value = DATA.settings.founding_size || ""; $("s-final").value = DATA.settings.final_goal || "";
+  $("kpis").innerHTML = [["Jumlah leads", t.leads], ["Disahkan grup", t.verified], ["Hari ini", t.today], ["Melalui rujukan", t.referred], ["Ada akses", DATA.unlocked]].map(([a, b]) => `<div class="kpi"><b>${b}</b><span>${a}</span></div>`).join("");
+  const q = $("q").value.trim().toLowerCase();
+  const rows = DATA.leads.filter(l => !q || [l.name, l.email, l.phone].join(" ").toLowerCase().includes(q));
+  $("rows").innerHTML = rows.map(l => `<tr><td>${fmt(l.created_at)}</td><td>${esc(l.name)}</td><td>${esc(l.phone)}</td><td>${esc(l.email)}</td><td>${esc(l.grup)}</td>
+    <td>${l.flagged ? '<span class="pill n">Dibatalkan</span>' : l.vip ? '<span class="pill v">VIP</span>' : l.verified ? '<span class="pill y">Disahkan</span>' : '<span class="pill n">Belum</span>'}</td><td>${esc(l.dirujuk_oleh)}</td><td>${l.rujukan_sah}</td></tr>`).join("");
+  $("rowcount").textContent = `${rows.length} daripada ${DATA.leads.length} leads`;
+  $("top").innerHTML = DATA.top.map(x => `<tr><td>${esc(x.name)}</td><td>${esc(x.phone)}</td><td>${x.sah}</td><td>${x.jumlah}</td></tr>`).join("") || '<tr><td colspan="4" class="muted">Belum ada rujukan.</td></tr>';
+  $("groups").innerHTML = DATA.groups.map(g => `<form class="panel gform grp" data-id="${g.id}" novalidate>
+    <div style="grid-column:1/-1"><b>${esc(g.name)}</b> ${g.active ? "" : '<span class="pill n">tidak aktif</span>'}<div class="muted" style="font-size:13px">${g.assigned}/${g.capacity} ahli diberi link</div><div class="bar"><i style="width:${Math.min(100, 100 * g.assigned / g.capacity)}%"></i></div></div>
+    <input name="code" value="${esc(g.verify_code)}" aria-label="Kod pengesahan"><input name="url" value="${esc(g.invite_url)}" aria-label="Link grup">
+    <button class="btn ghost" type="submit">Simpan kod / link</button><button class="btn ghost" type="button" data-toggle="${g.active ? 0 : 1}">${g.active ? "Nyahaktif" : "Aktifkan"}</button></form>`).join("");
+  document.querySelectorAll(".grp").forEach(f => {
+    f.addEventListener("submit", async e => { e.preventDefault(); const r = await rpc("admin_group", { p_key: KEY, p_id: +f.dataset.id, p_name: null, p_url: f.url.value, p_code: f.code.value, p_capacity: null, p_active: null, p_sort: null }); toast(r.ok ? "Disimpan ✓ — kemas kini mesej pin dalam grup" : "Gagal"); load(); });
+    f.querySelector("[data-toggle]").addEventListener("click", async b => { await rpc("admin_group", { p_key: KEY, p_id: +f.dataset.id, p_name: null, p_url: null, p_code: null, p_capacity: null, p_active: b.target.dataset.toggle === "1", p_sort: null }); load(); });
+  });
+  $("rewards").innerHTML = (DATA.rewards || []).map(w => `<form class="gform rw" data-id="${w.id}" novalidate style="border:1px solid var(--line);border-radius:14px;padding:12px">
+    <label class="f" style="grid-column:1/-1">Nama hadiah<input name="name" value="${esc(w.name)}"></label>
+    <label class="f">Dibuka pada (ahli komuniti)<input name="rel" type="number" min="0" value="${w.release_at}"></label>
+    <label class="f">Kawan diperlukan (kumulatif)<input name="needed" type="number" min="0" value="${w.needed}"></label>
+    <label class="f">Nilai (cth. RM100)<input name="value" value="${esc(w.value)}"></label>
+    <label class="f">Link hadiah (Gem / kelas / muat turun)<input name="url" value="${esc(w.url)}"></label>
+    <label class="f" style="grid-column:1/-1">Nota untuk ahli<input name="note" value="${esc(w.note)}"></label>
+    <label class="consent" style="grid-column:1/-1"><input type="checkbox" name="ff" ${w.founding_free ? "checked" : ""}> <span>Percuma untuk Founding (tak perlu kawan)</span></label>
+    <label class="consent" style="grid-column:1/-1"><input type="checkbox" name="sp" ${w.surprise ? "checked" : ""}> <span>Hadiah kejutan — nama disembunyikan sehingga dibuka</span></label>
+    <button class="btn ghost" type="submit">Simpan hadiah</button></form>`).join("");
+  document.querySelectorAll("form.rw").forEach(f => f.addEventListener("submit", async e => { e.preventDefault(); const el = n => f.elements.namedItem(n);
+    const r = await rpc("admin_reward", { p_key: KEY, p_id: +f.dataset.id, p_name: el("name").value, p_needed: +el("needed").value, p_url: el("url").value, p_active: null,
+      p_release_at: +el("rel").value, p_value: el("value").value, p_note: el("note").value, p_founding_free: el("ff").checked, p_surprise: el("sp").checked }); toast(r.ok ? "Disimpan ✓" : "Gagal"); load(); }));
+}
+$("setf").addEventListener("submit", async e => { e.preventDefault();
+  const a = await rpc("admin_setting", { p_key: KEY, p_name: "founding_size", p_value: $("s-founding").value });
+  const b = await rpc("admin_setting", { p_key: KEY, p_name: "final_goal", p_value: $("s-final").value });
+  toast(a.ok && b.ok ? "Disimpan ✓" : "Gagal"); load(); });
+$("q").addEventListener("input", () => DATA && render());
+$("flagf").addEventListener("submit", e => { e.preventDefault(); flag(true); });
+$("unflag").addEventListener("click", () => flag(false));
+$("lf").addEventListener("submit", e => { e.preventDefault(); KEY = $("key").value.trim(); store.set("adminkey", KEY); load(); });
+$("reload").addEventListener("click", load);
+$("out").addEventListener("click", () => { store.del("adminkey"); location.reload(); });
+$("gnew").addEventListener("submit", async e => { e.preventDefault(); const r = await rpc("admin_group", { p_key: KEY, p_id: null, p_name: $("gn").value, p_url: $("gu").value, p_code: $("gc").value, p_capacity: +$("gk").value || 950, p_active: true, p_sort: 99 }); toast(r.ok ? "Grup ditambah ✓" : "Gagal"); load(); });
+$("vipf").addEventListener("submit", async e => { e.preventDefault(); const r = await rpc("admin_vip", { p_key: KEY, p_phone: $("vipph").value, p_vip: true }); toast(r.ok ? "VIP diberi ✓" : "Nombor tidak dijumpai"); load(); });
+$("csv").addEventListener("click", () => {
+  const cols = ["created_at", "name", "phone", "email", "grup", "verified", "vip", "flagged", "dirujuk_oleh", "rujukan_sah", "tidak_dikira"];
+  const csv = [cols.join(",")].concat(DATA.leads.map(l => cols.map(c => `"${String(l[c] ?? "").replace(/"/g, '""')}"`).join(","))).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv" })); a.download = "leads-30-gaya.csv"; a.click();
+});
+if (KEY) load();
+</script>
+</body>
+</html>

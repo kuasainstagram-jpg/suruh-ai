@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Dashboard 30 Gaya · Cikgu Mirul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body style="padding-bottom:190px">
+<div class="wrap">
+  <header class="band" style="padding-bottom:12px">
+    <div class="row" style="gap:10px"><h2 id="hello">Memuatkan…</h2><span class="member" id="member" hidden></span></div>
+    <p class="muted" id="class-text" style="margin:6px 0 0"></p>
+    <div class="err" id="load-err" role="alert"></div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Bahagian dashboard" hidden>
+    <button type="button" role="tab" class="tab on" data-tab="main" aria-selected="true">Gaya &amp; Tema</button>
+    <button type="button" role="tab" class="tab" data-tab="adv" aria-selected="false">WOW Advanced <span class="paid">Berbayar</span></button>
+  </nav>
+
+  <section class="band" id="adv" role="tabpanel" aria-label="WOW Advanced">
+    <div class="adv-hero">
+      <span class="eyebrow">Versi berbayar · pratonton</span>
+      <h2>WOW Advanced</h2>
+      <p class="muted" style="margin:6px 0 0">Kesan paling padu untuk video anda — setiap satu dirancang dengan <b>storyboard</b> yang anda lulus dulu sebelum video dihasilkan. Tengok contohnya di bawah.</p>
+    </div>
+    <div class="grid" id="agrid" style="margin-top:14px"></div>
+    <div id="pgr" hidden style="margin-top:22px">
+      <div class="row" style="justify-content:space-between;align-items:baseline;gap:10px"><h2>Mod Pengarah</h2><span class="lockpill">👁 Admin sahaja</span></div>
+      <p class="muted" style="margin:6px 0 0">Untuk video “power”: isi objektif → Claude tulis skrip, senarai shot & B-roll ikut resipi → anda rakam → hantar klip → Claude susun & edit.</p>
+      <form id="pgf" class="panel" style="margin-top:12px;display:flex;flex-direction:column;gap:10px" novalidate>
+        <label>Resipi<select id="pg-r" style="display:block;width:100%;min-height:44px;margin-top:4px"><option value="R01">R01 · Tipografi Merah (servis, agensi, personal brand)</option></select></label>
+        <label>Produk / servis / tawaran<input id="pg-p" type="text" placeholder="cth. Kelas Mesin Duit Threads" style="display:block;width:100%;min-height:44px;margin-top:4px"></label>
+        <label>Sasaran<input id="pg-s" type="text" placeholder="cth. suri rumah yang nak income tambahan dari Threads" style="display:block;width:100%;min-height:44px;margin-top:4px"></label>
+        <label>Matlamat video<input id="pg-m" type="text" placeholder="cth. orang daftar kelas / DM / follow" style="display:block;width:100%;min-height:44px;margin-top:4px"></label>
+        <label>CTA<input id="pg-c" type="text" placeholder="cth. Komen THREADS" style="display:block;width:100%;min-height:44px;margin-top:4px"></label>
+        <label>Fakta sebenar yang boleh disebut (pilihan)<textarea id="pg-f" rows="3" placeholder="pengalaman, hasil sebenar, apa yang termasuk…" style="display:block;width:100%;margin-top:4px"></textarea></label>
+        <button class="btn" type="submit">Salin arahan untuk Claude</button>
+        <textarea class="fb" id="pg-fb" hidden readonly></textarea>
+      </form>
+    </div>
+    <div id="fmt" hidden style="margin-top:22px">
+      <div class="row" style="justify-content:space-between;align-items:baseline;gap:10px"><h2>Format Lain</h2><span class="lockpill">👁 Admin sahaja</span></div>
+      <p class="muted" style="margin:6px 0 0">Satu video → lebih banyak kandungan. Berbayar.</p>
+      <div class="grid" id="fgrid" style="margin-top:12px"></div>
+    </div>
+    <div class="panel" style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+      <h3 id="adv-name" style="margin:0">Pakej WOW Advanced</h3><div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span id="adv-price" style="font:900 48px Montserrat,sans-serif;color:var(--gold);line-height:1">RM59</span><span class="muted" id="adv-pnote" style="font-size:13.5px"></span></div>
+      <ul class="mini" id="adv-feat"></ul>
+      <a class="btn" id="adv-btn" href="#" target="_blank" rel="noopener">Saya nak — RM59</a>
+      <p class="muted" id="adv-note" style="margin:0;font-size:13.5px"></p>
+    </div>
+  </section>
+
+  <!-- the one thing to do next -->
+  <section class="panel next-card" id="join" hidden>
+    <span class="eyebrow">Langkah seterusnya</span>
+    <h3>Masuk grup WhatsApp, kemudian sahkan</h3>
+    <ol class="mini">
+      <li>Tekan <b>Masuk grup</b> — kelas percuma diumumkan di sana.</li>
+      <li>Salin kod dalam mesej yang di-pin, tampal di bawah.</li>
+    </ol>
+    <a class="btn wa" id="grp-btn" href="#" target="_blank" rel="noopener">Masuk grup WhatsApp</a>
+    <form id="vf" class="row" novalidate><input class="code" id="vcode" type="text" autocomplete="off" placeholder="Kod grup, cth. MIRUL-1234" style="flex:1;min-width:150px"><button class="btn" id="vbtn" type="submit">Sahkan</button></form>
+    <div class="err" id="v-err" role="alert"></div>
+  </section>
+
+  <!-- what to do now -->
+  <section class="panel now-card" id="now" hidden style="margin-top:12px">
+    <span class="eyebrow" id="now-eb"></span>
+    <h3 id="now-title"></h3>
+    <p class="muted" id="now-text" style="margin:0"></p>
+    <div class="row"><button class="btn wa" type="button" id="now-wa">Kongsi ke WhatsApp</button><a class="btn ghost" href="jemput.html" id="now-btn"></a></div>
+  </section>
+
+  <section class="band" id="fn" hidden style="padding-bottom:0"></section>
+  <section class="band" id="cele" hidden style="padding-bottom:0"></section>
+
+  <section class="band" id="theme" hidden style="padding-bottom:0">
+    <div class="row" style="justify-content:space-between;align-items:baseline;gap:10px"><h2>Tema Wow</h2><span class="lockpill" id="theme-lock">🎁 Hadiah ahli</span></div>
+    <p class="muted" style="margin:6px 0 0">Satu tema = video anda nampak macam diedit penuh: konsep, B-roll & kapsyen automatik. Pilih satu, boleh campur dengan gaya di bawah.</p>
+    <div class="grid" id="tgrid" style="margin-top:12px"></div>
+  </section>
+
+  <section class="band" style="padding-bottom:0">
+    <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+      <h3>Hadiah anda</h3>
+      <div id="ladder"></div>
+      <p class="fline" id="fline" style="margin:0"></p>
+      <p class="muted" style="margin:0;font-size:13.5px">Kawan dikira bila mereka daftar guna link anda <b>dan</b> sahkan grup dari telefon mereka sendiri. Pendaftaran palsu dibatalkan. <a href="jemput.html#peraturan">Lihat peraturan</a></p>
+    </div>
+  </section>
+
+  <section class="band" style="padding-bottom:0">
+    <details class="panel howto" id="howto">
+      <summary>Cara guna (6 langkah)</summary>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+        <div style="border:1px dashed rgba(245,184,46,.55);border-radius:16px;padding:14px">
+          <span class="eyebrow">Persediaan · sekali sahaja</span>
+          <ul style="margin:8px 0 0;padding-left:20px;display:grid;gap:6px;font-size:14.5px">
+            <li>Akaun <b>Claude</b> yang ada <b>Claude Code</b> (app Claude atau claude.ai).</li>
+            <li>Akaun <b>GitHub</b> percuma → buka repo <a id="repo-link" href="#" target="_blank" rel="noopener">suruh-ai</a> → tekan <b>Fork</b>.</li>
+            <li>Dalam Claude → <b>Code</b> → sambung GitHub → pilih repo itu.</li>
+          </ul>
+        </div>
+        <ol class="plan">
+          <li><div><b>Sediakan video</b><div class="muted">Rakam tegak (9:16). Upload ke Google Drive → Kongsi → <b>“Sesiapa yang ada pautan”</b> → salin link.</div></div></li>
+          <li><div><b>Pilih 5–6 gaya</b><div class="muted">1 Hook + 1 Caption + 2–3 Kad + 1 Penutup. Atau tekan <b>Pilihkan untuk saya</b>.</div></div></li>
+          <li><div><b>Tekan “Salin arahan”</b><div class="muted">Kod gaya anda disalin sekali.</div></div></li>
+          <li><div><b>Tampal dalam Claude Code</b><div class="muted">Sesi baharu → repo suruh-ai → tampal → ganti “Video:” dengan link anda → hantar.</div></div></li>
+          <li><div><b>Jawab soalan Claude</b><div class="muted">Gaya bertanda <span class="need" style="display:inline">Perlu</span> perlukan bahan anda (angka sebenar, nama, gambar).</div></div></li>
+          <li><div><b>Muat turun video</b><div class="muted">±5–10 minit. Dapat MP4 penuh + versi WhatsApp.</div></div></li>
+        </ol>
+      </div>
+    </details>
+  </section>
+
+  <section class="band">
+    <h2>Pilih gaya</h2>
+    <p class="muted" id="grid-note" hidden style="margin:6px 0 0">Pratonton sahaja. Butang <b>Salin arahan</b> dibuka bila akses anda terbuka.</p>
+    <nav class="filters" id="filters" aria-label="Kategori"></nav>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="band" id="locked-sec" style="padding-top:0" hidden>
+    <div class="row" style="justify-content:space-between;align-items:baseline"><h2>Pek Gaya Baharu</h2><a id="lock-state" href="jemput.html" class="lockpill" style="text-decoration:none">🔒 Berkunci</a></div>
+    <div class="grid" id="lgrid" style="margin-top:12px"></div>
+  </section>
+
+  <section class="band" style="padding-top:0">
+    <details class="panel">
+      <summary style="cursor:pointer;font-weight:800">Buka dashboard dari telefon lain</summary>
+      <p class="muted" style="margin:10px 0">Simpan link log masuk ini. <b>Rahsia — jangan kongsi.</b> Untuk ajak kawan, guna halaman <a href="jemput.html">Ajak kawan</a>.</p>
+      <div class="linkline" id="privlink">…</div>
+      <div class="row" style="margin-top:10px"><button class="btn ghost" type="button" id="copypriv">Salin link</button><button class="btn ghost" type="button" id="logout">Log keluar</button></div>
+    </details>
+  </section>
+  <textarea class="fb" id="fb2" hidden readonly></textarea>
+  <footer>© Cikgu Mirul · <a href="privacy.html">Notis privasi</a></footer>
+</div>
+
+<div class="dock">
+  <div class="in">
+    <div class="sel"><span class="n" id="cnt">0</span><span class="codes" id="codes">Belum pilih — tik kad gaya</span></div>
+    <div class="btns"><button class="btn ghost" id="auto" type="button">Pilihkan untuk saya</button><button class="btn" id="copy" type="button" disabled>Salin arahan</button></div>
+    <textarea class="fb" id="fb" hidden readonly></textarea>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="config.js"></script>
+<script src="assets/styles.js"></script>
+<script src="assets/advanced.js"></script>
+<script src="assets/materials.js"></script>
+<script src="assets/app.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+if (q.get("t")) { store.set("token", q.get("t")); history.replaceState(null, "", "app.html"); }
+const token = store.get("token");
+if (!token) location.href = "index.html#daftar";
+$("class-text").textContent = C.CLASS_TEXT;
+$("repo-link").href = C.SKILL_REPO;
+// the guide opens by itself on the first visit only
+try { if (!localStorage.getItem("howto_seen")) { $("howto").open = true; localStorage.setItem("howto_seen", "1"); } } catch (e) {}
+let S = null;
+const LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+
+$("filters").innerHTML = '<button class="chip on" data-f="all" type="button">Semua</button><button class="chip" data-f="fav" type="button">❤️ Kegemaran</button>' + CATS.map(([n, k]) => `<button class="chip" data-f="${k}" type="button">${n}</button>`).join("");
+// ---- favourites (❤️ on every card, remembered on this phone)
+const FAV = { get() { try { return JSON.parse(localStorage.getItem("fav") || "[]"); } catch (e) { return []; } }, set(a) { try { localStorage.setItem("fav", JSON.stringify(a)); } catch (e) {} } };
+function hearts(root) {
+  const favs = FAV.get();
+  root.querySelectorAll(".card").forEach(c => {
+    const code = (c.querySelector(".code") || {}).textContent; const v = c.querySelector(".vid");
+    if (!code || !v || v.querySelector(".fav")) return;
+    v.insertAdjacentHTML("beforeend", `<button type="button" class="fav${favs.includes(code) ? " on" : ""}" aria-label="Simpan ${code} sebagai kegemaran" aria-pressed="${favs.includes(code)}">${favs.includes(code) ? "❤️" : "🤍"}</button>`);
+    v.querySelector(".fav").addEventListener("click", e => {
+      e.preventDefault(); e.stopPropagation();
+      let f = FAV.get(); const on = !f.includes(code); f = on ? f.concat(code) : f.filter(x => x !== code); FAV.set(f);
+      e.currentTarget.classList.toggle("on", on); e.currentTarget.textContent = on ? "❤️" : "🤍"; e.currentTarget.setAttribute("aria-pressed", on);
+      toast(on ? `${code} disimpan dalam Kegemaran ❤️` : `${code} dibuang dari Kegemaran`);
+    });
+  });
+}
+$("grid").innerHTML = STYLES.map(s => `<label class="card" data-cat="${s.code[0]}" for="s-${s.code}"><input type="checkbox" id="s-${s.code}" value="${s.code}">
+  <div class="vid"><video src="previews/${s.code}.mp4" poster="previews/${s.code}.jpg" muted loop playsinline preload="none"></video><span class="tick" aria-hidden="true"></span></div>
+  <div class="meta"><span class="code">${s.code}</span><span class="name">${s.name}</span><p>${s.desc}</p>${s.need ? `<span class="need">Perlu: ${s.need}</span>` : ""}</div></label>`).join("");
+function premiumGrid(open) {
+  $("lgrid").innerHTML = PREMIUM.map(([c, n, d, need]) => open
+    ? `<label class="card" for="s-${c}"><input type="checkbox" id="s-${c}" value="${c}"><div class="vid"><video src="previews/premium/${c}.mp4" poster="previews/premium/${c}.jpg" muted loop playsinline preload="none"></video><span class="tick" aria-hidden="true"></span></div>
+       <div class="meta"><span class="code">${c}</span><span class="name">${n}</span><p>${d}</p>${need ? `<span class="need">Perlu: ${need}</span>` : ""}</div></label>`
+    : `<div class="card locked"><div class="vid"><video src="previews/premium/${c}.mp4" poster="previews/premium/${c}.jpg" muted loop playsinline preload="none"></video></div>
+       <div class="meta"><div class="row" style="gap:6px"><span class="code" style="background:#2a2d35;color:#C9D0DC">${c}</span><span class="lockpill">${LOCK}Berkunci</span></div><span class="name">${n}</span><p>${d}</p></div></div>`).join("");
+  autoplayVisible($("lgrid")); hearts($("lgrid"));
+  if (open) document.querySelectorAll("#lgrid input").forEach(b => { boxes.push(b); b.addEventListener("change", refreshSel); });
+}
+document.querySelectorAll("#filters .chip").forEach(ch => ch.addEventListener("click", () => {
+  document.querySelectorAll("#filters .chip").forEach(x => x.classList.toggle("on", x === ch));
+  const favs = FAV.get();
+  document.querySelectorAll("#grid .card").forEach(c => (c.hidden = ch.dataset.f === "fav" ? !favs.includes(c.querySelector(".code").textContent) : ch.dataset.f !== "all" && c.dataset.cat !== ch.dataset.f));
+}));
+autoplayVisible($("grid")); hearts($("grid"));
+
+const boxes = [...document.querySelectorAll("#grid input")];
+premiumGrid(false);
+const chosen = () => boxes.filter(b => b.checked).map(b => b.value);
+function refreshSel() {
+  const c = chosen(), open = S && S.access;
+  const sel = (TEMA_SEL ? [TEMA_SEL] : []).concat(c);
+  $("cnt").textContent = sel.length;
+  $("codes").textContent = !S ? "…" : !open ? "🔒 Dibuka bila akses anda terbuka" : sel.length ? sel.join(" · ") : "Belum pilih — tik kad gaya";
+  $("copy").disabled = !open || !sel.length; $("auto").disabled = !open;
+}
+boxes.forEach(b => b.addEventListener("change", refreshSel));
+let TEMA_SEL = null;
+function temaGrid(open) {
+  if (temaGrid.state === open) return; temaGrid.state = open;
+  $("tgrid").innerHTML = TEMA.map(([c, n, d]) => `<label class="card${open ? "" : " locked"}" ${open ? `for="t-${c}"` : ""}>${open ? `<input type="radio" name="tema" id="t-${c}" value="${c}">` : ""}
+    <div class="vid"><video src="previews/tema/${c}.mp4" poster="previews/tema/${c}.jpg" muted loop playsinline preload="none"></video>${open ? '<span class="tick" aria-hidden="true"></span>' : ""}</div>
+    <div class="meta"><span class="code">${c}</span><span class="name">${n}</span><p>${d}</p></div></label>`).join("");
+  autoplayVisible($("tgrid")); hearts($("tgrid"));
+  if (open) document.querySelectorAll('#tgrid input').forEach(b => b.addEventListener("change", () => { TEMA_SEL = b.value; refreshSel(); }));
+}
+function prompt(codes) {
+  const L = ['Edit video saya guna skill "30 Gaya Video Cikgu Mirul" (repo suruh-ai).'];
+  if (TEMA_SEL) {
+    const t = TEMA.find(x => x[0] === TEMA_SEL); const tp = S && (S.rewards || []).find(r => r.kind === "theme" && r.unlocked && r.url);
+    L.push(`Tema: ${TEMA_SEL} ${t ? t[1] : ""} — rancang B-roll automatik ikut catalog_tema.md.`);
+    if (tp) L.push(`Pek Tema Wow: muat turun ${tp.url} dan unzip ke .claude/skills/gaya-cikgu-mirul/ sebelum edit.`);
+  }
+  if (codes) {
+    L.push("Gaya: " + codes.join(" "));
+    const all = STYLES.map(s => [s.code, s.need]).concat(PREMIUM.map(p => [p[0], p[3]]));
+    const need = codes.map(c => all.find(x => x[0] === c)).filter(x => x && x[1]).map(x => `${x[0]} → ${x[1]}: ___`);
+    if (need.length) L.push("Bahan saya:", ...need);
+    const pk = S && (S.rewards || []).find(r => r.kind === "pack" && r.unlocked && r.url);
+    if (codes.some(c => c.startsWith("P")) && pk) L.push(`Pek Gaya Baharu: muat turun ${pk.url} dan unzip ke .claude/skills/gaya-cikgu-mirul/ sebelum edit.`);
+  } else L.push("Tonton video saya, pilihkan 5–6 gaya yang paling sesuai, dan terangkan kenapa sebelum mula edit.");
+  L.push("Video: (link Google Drive / saya upload dalam chat ini)", "Format: 9:16 (1080×1920). Kekalkan suara asal saya.");
+  return L.join("\n");
+}
+$("copy").addEventListener("click", () => copyText(prompt(chosen()), "fb"));
+$("auto").addEventListener("click", () => copyText(prompt(null), "fb"));
+
+function render(s) {
+  S = s;
+  $("hello").textContent = `Hai ${s.name.split(" ")[0]} 👋`;
+  $("member").hidden = false; $("member").textContent = `Ahli #${num(s.member_no)}${s.founding ? " · Founding" : ""}`;
+  $("grp-btn").href = s.group_url || "#";
+  $("join").hidden = !!s.verified;
+  const n = nowCard(s);
+  $("now").hidden = false; $("now-eb").textContent = n.eb; $("now-title").textContent = n.title; $("now-text").textContent = n.text;
+  $("now-btn").textContent = n.btn ? "Ayat & bahan kongsi →" : ""; $("now-btn").hidden = !n.btn; $("now-wa").hidden = !n.btn || !!s.flagged;
+  const fn = friendNotice(s); $("fn").hidden = !fn; $("fn").innerHTML = fn;
+  const th = (s.rewards || []).find(r => r.kind === "theme");
+  if (th && window.TEMA) {
+    $("theme").hidden = false;
+    $("theme-lock").textContent = th.unlocked ? "✓ Terbuka" : th.later ? "🎁 Hadiah ahli" : `🔒 Ajak ${Math.max(0, th.needed - th.have)} lagi kawan` + (th.released ? "" : " · dibuka tidak lama lagi");
+    temaGrid(!!th.unlocked);
+  }
+  if (window.advGate) advGate(s.community ? s.community.total : 0);
+  const cb = celebrateHTML(s.community); $("cele").hidden = !cb; $("cele").innerHTML = cb;
+  $("ladder").innerHTML = ladderHTML(s);
+  $("fline").innerHTML = "Kawan anda: " + friendsLine(s);
+  $("grid-note").hidden = !!s.access;
+  const pk = (s.rewards || []).find(r => r.kind === "pack");
+  $("locked-sec").hidden = !pk;  // pek baharu stays secret until revealed
+  if (pk && pk.unlocked) { $("lock-state").textContent = "✓ Terbuka"; $("lock-state").removeAttribute("href"); if (!premiumGrid.done) { premiumGrid(true); premiumGrid.done = true; } }
+  else if (pk) $("lock-state").textContent = pk.released ? `🔒 Perlu ${pk.needed} kawan` : `🔒 Dibuka pada ${num(pk.release_at)} ahli`;
+  $("privlink").textContent = pretty(`${siteBase()}/app.html?t=${token}`);
+  refreshSel();
+}
+$("now-wa").addEventListener("click", () => S && waShare(shareText(refLink(S.ref_code), S.community.total >= S.community.founding_size)));
+$("copypriv").addEventListener("click", () => copyText("https://" + $("privlink").textContent, "fb2"));
+$("logout").addEventListener("click", () => { store.del("token"); location.href = "index.html"; });
+
+$("vf").addEventListener("submit", async ev => {
+  ev.preventDefault(); $("v-err").textContent = ""; $("vbtn").disabled = true;
+  try { const r = await rpc("verify_group", { p_token: token, p_code: $("vcode").value, p_device: deviceId() }); if (r.error) $("v-err").textContent = errText(r.error); else { render(r); toast("Disahkan ✓"); } }
+  catch (e) { $("v-err").textContent = e.message; } finally { $("vbtn").disabled = false; }
+});
+
+rpc("lead_status", { p_token: token }).then(r => {
+  if (r.error) { $("load-err").textContent = errText(r.error); if (r.error === "TOKEN") { store.del("token"); setTimeout(() => (location.href = "index.html#daftar"), 1500); } return; }
+  render(r);
+}).catch(e => ($("load-err").textContent = e.message));
+refreshSel();
+
+// ---- tabs: "Gaya & Tema" (free) | "WOW Advanced" (paid preview) ----
+(function () {
+  const A = window.ADV || { items: [], features: [] };
+  $("agrid").innerHTML = A.items.map(it => `<div class="card adv-card">
+    <div class="vid"><video src="${it.video}" poster="${it.poster}" muted loop playsinline preload="none"></video><span class="paidtag">${it.badge || "Berbayar"}</span></div>
+    <div class="meta"><span class="code">${it.code}</span><span class="name">${it.name}</span><p>${it.desc}</p></div></div>`).join("");
+  $("adv-feat").innerHTML = A.features.map(f => `<li>${f}</li>`).join("");
+  $("fgrid").innerHTML = (A.formats || []).map(f => `<div class="card adv-card"><div class="vid" style="aspect-ratio:4/5">${f.img ? `<img src="${f.img}" alt="${f.name}" style="width:100%;height:100%;object-fit:cover;display:block">` : '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#9AA3B2;font-weight:800">Akan datang</div>'}<span class="paidtag">${f.ready ? "Berbayar" : "Dalam pembinaan"}</span></div>
+    <div class="meta"><span class="code">${f.code}</span><span class="name">${f.name}</span><p>${f.desc}</p></div></div>`).join("");
+  window.fmtGate = () => { $("fmt").hidden = !(window.ADMIN_OK || (window.CONFIG || {}).FORMATS_PUBLIC); $("pgr").hidden = !(window.ADMIN_OK || (window.CONFIG || {}).PENGARAH_PUBLIC); };
+  $("pgf").addEventListener("submit", e => {
+    e.preventDefault(); const v = id => $(id).value.trim();
+    const L = ['MOD PENGARAH — skill "gaya-cikgu-mirul" (scripts/pengarah.py, resipi/' + v("pg-r") + ').',
+      "Resipi: " + $("pg-r").selectedOptions[0].textContent, "Produk/tawaran: " + v("pg-p"), "Sasaran: " + v("pg-s"), "Matlamat: " + v("pg-m"), "CTA: " + v("pg-c")];
+    if (v("pg-f")) L.push("Fakta sebenar: " + v("pg-f"));
+    L.push("Tulis brief.json ikut babak resipi (skrip BM ringkas, guna fakta di atas sahaja — jangan reka angka/testimoni), jana halaman Mod Pengarah, dan beri saya link/fail untuk dibuka di phone semasa rakam.");
+    copyText(L.join("\n"), "pg-fb");
+  });
+  fmtGate();
+  if (A.price) { $("adv-price").textContent = A.price; $("adv-name").textContent = A.name || "Pakej WOW Advanced"; $("adv-pnote").textContent = A.note || ""; }
+  const link = (window.CONFIG || {}).ADV_LINK || "";
+  if (link) { $("adv-btn").href = link; $("adv-btn").textContent = "Saya nak — " + (A.price || ""); $("adv-note").textContent = "Selepas bayar, pakej & cara pasang dihantar kepada anda."; }
+  else { $("adv-btn").removeAttribute("href"); $("adv-btn").classList.add("disabled"); $("adv-btn").textContent = "Dibuka tidak lama lagi"; $("adv-note").textContent = "Pratonton sahaja buat masa ini. Pengumuman dalam grup WhatsApp."; }
+  let seen = false;
+  function show(t) {
+    document.body.classList.toggle("tab-adv", t === "adv");
+    document.querySelectorAll("#tabs .tab").forEach(b => { const on = b.dataset.tab === t; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+    if (t === "adv" && !seen) { seen = true; autoplayVisible($("agrid")); }
+    try { sessionStorage.setItem("tab", t); } catch (e) {}
+  }
+  document.querySelectorAll("#tabs .tab").forEach(b => b.addEventListener("click", () => show(b.dataset.tab)));
+  // WOW Advanced (paid) stays completely hidden until the community reaches ADV_RELEASE members (default 2,000)
+  window.advGate = function (total) {
+    if (total != null) advGate.total = total;
+    const open = window.ADMIN_OK || (advGate.total || 0) >= ((window.CONFIG || {}).ADV_RELEASE || 2000);
+    $("tabs").hidden = !open;
+    if (!open) { show("main"); return; }
+    if (advGate.done) return; advGate.done = true;
+    let t0 = "main"; try { t0 = sessionStorage.getItem("tab") || t0; } catch (e) {}
+    if (location.hash === "#advanced") t0 = "adv";
+    show(t0);
+  };
+  show("main");
+  // the admin (logged in on admin.html on this phone) can always preview the paid tab
+  const ak = store.get("adminkey");
+  if (ak) rpc("admin_overview", { p_key: ak }).then(r => {
+    if (!r || r.error) return;
+    window.ADMIN_OK = true; if (window.fmtGate) fmtGate();
+    const tab = document.querySelector('#tabs [data-tab="adv"]');
+    if (tab && !tab.querySelector(".adm")) tab.insertAdjacentHTML("beforeend", ' <span class="adm" title="Hanya admin nampak sebelum dibuka">👁 Admin</span>');
+    advGate(null);
+  }).catch(() => {});
+})();
+</script>
+</body>
+</html>
