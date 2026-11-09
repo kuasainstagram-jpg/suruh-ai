@@ -2,7 +2,7 @@
 // Supabase → Project Settings → API: "Project URL" dan kunci "anon public" (kunci ini memang untuk website, selamat didedahkan).
 window.CONFIG = {
   // Domain website anda (tanpa / di hujung). Link jemputan jadi: suruhaieditvideogunaphone.com/KOD
-  SITE_URL: "",   // kosong = ikut alamat semasa. Bila domain dibeli: "https://suruhaieditvideogunaphone.com" (dan tambah fail CNAME)
+  SITE_URL: "https://suruhaieditvideogunaphone.com",
   SUPABASE_URL: "https://plivwtlbgmhxqerhezpw.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_JTGGoP46xhd6o05cjoN2nQ_kFaxMvpW",
   // Video sneak peek untuk affiliate (cth. "share/sneak-affiliate.mp4"). Kosong = bahagian disembunyikan.

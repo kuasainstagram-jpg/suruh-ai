@@ -33,7 +33,7 @@
       <div class="row" style="justify-content:space-between;align-items:baseline;gap:10px"><h2>Mod Pengarah</h2><span class="lockpill">👁 Admin sahaja</span></div>
       <p class="muted" style="margin:6px 0 0">Untuk video “power”: isi objektif → Claude tulis skrip, senarai shot & B-roll ikut resipi → anda rakam → hantar klip → Claude susun & edit.</p>
       <form id="pgf" class="panel" style="margin-top:12px;display:flex;flex-direction:column;gap:10px" novalidate>
-        <label>Resipi<select id="pg-r" style="display:block;width:100%;min-height:44px;margin-top:4px"><option value="R01">R01 · Tipografi Merah (servis, agensi, personal brand)</option></select></label>
+        <label>Resipi<select id="pg-r" style="display:block;width:100%;min-height:44px;margin-top:4px"><option value="R01">R01 · Tipografi Merah (servis, agensi, personal brand)</option><option value="R02">R02 · Amaran Jujur (kursus, bisnes kecil, siri pengajaran)</option></select></label>
         <label>Produk / servis / tawaran<input id="pg-p" type="text" placeholder="cth. Kelas Mesin Duit Threads" style="display:block;width:100%;min-height:44px;margin-top:4px"></label>
         <label>Sasaran<input id="pg-s" type="text" placeholder="cth. suri rumah yang nak income tambahan dari Threads" style="display:block;width:100%;min-height:44px;margin-top:4px"></label>
         <label>Matlamat video<input id="pg-m" type="text" placeholder="cth. orang daftar kelas / DM / follow" style="display:block;width:100%;min-height:44px;margin-top:4px"></label>
@@ -293,9 +293,10 @@ refreshSel();
 // ---- tabs: "Gaya & Tema" (free) | "WOW Advanced" (paid preview) ----
 (function () {
   const A = window.ADV || { items: [], features: [] };
-  $("agrid").innerHTML = A.items.map(it => `<div class="card adv-card">
+  window.advCards = () => { $("agrid").innerHTML = A.items.filter(it => !it.admin || window.ADMIN_OK).map(it => `<div class="card adv-card">
     <div class="vid"><video src="${it.video}" poster="${it.poster}" muted loop playsinline preload="none"></video><span class="paidtag">${it.badge || "Berbayar"}</span></div>
-    <div class="meta"><span class="code">${it.code}</span><span class="name">${it.name}</span><p>${it.desc}</p></div></div>`).join("");
+    <div class="meta"><span class="code">${it.code}</span><span class="name">${it.name}${it.admin ? ' <span class="adm">👁 Admin</span>' : ""}</span><p>${it.desc}</p></div></div>`).join(""); autoplayVisible($("agrid")); };
+  advCards();
   $("adv-feat").innerHTML = A.features.map(f => `<li>${f}</li>`).join("");
   $("fgrid").innerHTML = (A.formats || []).map(f => `<div class="card adv-card"><div class="vid" style="aspect-ratio:4/5">${f.img ? `<img src="${f.img}" alt="${f.name}" style="width:100%;height:100%;object-fit:cover;display:block">` : '<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#9AA3B2;font-weight:800">Akan datang</div>'}<span class="paidtag">${f.ready ? "Berbayar" : "Dalam pembinaan"}</span></div>
     <div class="meta"><span class="code">${f.code}</span><span class="name">${f.name}</span><p>${f.desc}</p></div></div>`).join("");
@@ -337,7 +338,7 @@ refreshSel();
   const ak = store.get("adminkey");
   if (ak) rpc("admin_overview", { p_key: ak }).then(r => {
     if (!r || r.error) return;
-    window.ADMIN_OK = true; if (window.fmtGate) fmtGate();
+    window.ADMIN_OK = true; if (window.fmtGate) fmtGate(); if (window.advCards) advCards();
     const tab = document.querySelector('#tabs [data-tab="adv"]');
     if (tab && !tab.querySelector(".adm")) tab.insertAdjacentHTML("beforeend", ' <span class="adm" title="Hanya admin nampak sebelum dibuka">👁 Admin</span>');
     advGate(null);
